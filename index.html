@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap + jQuery Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container ">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div id="div1">
+                    <form>
+                        <div class="form-group">
+                            <label for="my_url">URL</label>
+                            <input type="text" class="form-control" id="my_url" name="my_url" value="https://steelytoe.com/dev.titudev.com//api/v1/resources/master_file_tagging">
+                        </div>
+                        <div class="form-group">
+                            <label for="my_event">Event Name</label>
+                            <select class="form-control" id="my_event" name="my_event">
+                                <option value="BOROBUDUR MARATHON 2023">BOROBUDUR MARATHON 2023</option>
+                                <option value="Semarang 10K">Semarang 10K</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="my_bib">BIB/Name Search</label>
+                            <input type="text" class="form-control" id="my_bib" name="my_bib">
+                        </div>
+                        <div class="form-group">
+                            <label for="my_pagesize">Page Size</label>
+                            <input type="text" class="form-control" id="my_pagesize" name="my_pagesize" value="100">
+                        </div>
+                        <button type="button" class="btn btn-primary">Search!</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div id="div2">
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Your jQuery functionality can go here -->
+    <script>
+        $(document).ready(function () {
+            $('button').click(function () {
+                var url = $('#my_url').val();
+                var pageSize = $('#my_pagesize').val();
+                var eventName = $('#my_event').val();
+                var bibSearch = $('#my_bib').val();
+
+                var queryParams = {
+                    pageSize: pageSize,
+                    pageNumber: 1, // assuming always starting at page 1
+                    sort: '+mftgPhotoDate',
+                    'filter[mftgEventName]': eventName,
+                    'filter[mftgDescription][like]': '%' + bibSearch + '%'
+                };
+                $('#div2').html('');
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    data: queryParams,
+                    success: function (response) {
+                        var imageList = '<div class="row">';
+                        $.each(response.data, function (index, photo) {
+                            imageList += '<div class="col-md-4 mb-3">';
+                            imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2" alt="Event Image">';
+                            imageList += '<p><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
+                            imageList += '<p><strong>Description:</strong> ' + photo.mftgDescription + '</p>';
+                            imageList += '</div>';
+                        });
+                        imageList += '</div>';
+                        $('#div2').html(imageList);
+                    },
+
+                    error: function (xhr, status, error) {
+                        // Handle errors here
+                        console.error(status + ": " + error);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>
