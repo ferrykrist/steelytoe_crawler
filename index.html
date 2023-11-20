@@ -39,7 +39,6 @@
                     </div>
                     <div class="form-group">
                         <label for="my_location">Location, e.g., startline, 10K, etc</label><br>
-                        <small>Tips: cari dulu tanpa location, setelah itu perhatikan informasi lokasi yang ditampilkan</small>
                         <input type="text" class="form-control" id="my_location" name="my_location">
                     </div>
                     <div class="form-group">
@@ -48,8 +47,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="my_pagesize">Page Size</label>
-                        <input type="text" class="form-control" id="my_pagesize" name="my_pagesize" value="100">
+                        <label for="my_pagesize">Jumlah foto yang mau ditampilkan</label>
+                        <input type="text" class="form-control" id="my_pagesize" name="my_pagesize" value="30">
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="filter_location">
@@ -77,8 +76,10 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="d-flex justify-content-between">
-                                <p class="text-left" id="my_log"></p>
-                                <p class="text-right" id="my_pageinfo"></p>
+                                <small>
+                                    <p class="text-left" id="my_log"></p>
+                                    <p class="text-left" id="my_pageinfo"></p>
+                                </small>
                             </div>
 
                         </div>
@@ -93,6 +94,19 @@
                         <button type="button" class="btn btn-secondary mx-1" id="my_nextButton">Next</button>
                         <button type="button" class="btn btn-secondary mx-1" id="my_lastButton">Last</button>
 
+                    </div>
+                    <div class="row m-2">
+                        <h5>Baca ini dulu kak!</h5>
+                        <ul class="small">
+                            <li>Crawler ini bisa menampilkan foto anda sekaligus supaya tidak capek scroll halaman web penyelenggara lomba (belum lagi kalau nanti error)</li>
+                            <li>Btw, koneksi internet berpengaruh ya. Loading lambat itu murni dari internet anda. Tipsnya jangan tampilkan foto banyak2.</li>
+                            <li>Cari dulu BIB/nama anda, jangan lupa centang Filter by BIB/Name </li>
+                            <li>Foto tidak keluar walau BIB/Nama sudah di-input? Mungkin dari SteelyToe belum selesai proses Image to text </li>
+                            <li>Mau cari berdasarkan lokasi? Cari BIB anda, lalu perhatikan Location yang ditampilkan. Misal: 10K, HM, FM, KM 6,5, dst </li>
+                            <li>Anda nganggur dan mau browse ribuan foto? Kosongkan semua inputan, lalu klik Search</li>
+                            <li>Capek kalau harus klik next? masukkan page number lalu klik Search</li>
+
+                        </ul>
                     </div>
 
                 </form>
@@ -183,7 +197,6 @@
                             var imageUrl = $(this).data('image');
                             $('#modalImage').attr('src', imageUrl);
                         });
-                        $('#my_log').html('Total ada ' + response.status.totalRecords + ' Foto');
                         if (pageSize < response.status.totalRecords) {
                             $('#my_buttons').removeClass('d-none');
                         }
@@ -209,6 +222,7 @@
                 var $previousButton = $('#my_previousButton');
                 var $nextButton = $('#my_nextButton');
                 var $lastButton = $('#my_lastButton');
+                $('#my_log').html('Total ada ' + totalRecords + ' Foto dan ' + totalPages + ' halaman');
 
                 $nextButton.off('click');
                 $previousButton.off('click');
