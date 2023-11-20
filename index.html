@@ -146,8 +146,10 @@
                             var imageUrl = $(this).data('image');
                             $('#modalImage').attr('src', imageUrl);
                         });
-                        $('#my_log').html('Total ada ' + response.status.totalRecords + 'Foto');
-                        $('#my_buttons').removeClass('d-none');
+                        $('#my_log').html('Total ada ' + response.status.totalRecords + ' Foto');
+                        if (pageSize < response.status.totalRecords) {
+                            $('#my_buttons').removeClass('d-none');
+                        }
                         updateNavigation(response.status.totalRecords, queryParams);
                     },
 
