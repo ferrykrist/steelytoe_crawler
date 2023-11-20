@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <title>Stellytoe Crawler</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -11,9 +13,11 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-4 col-md-4 col-lg-4">
-                <h4>Stellytoe Image Crawler</h4>
+            <div class="col-lg-4 ">
                 <form>
+                    <div class="form-group mt-2">
+                        <h4 class="text-center">Stellytoe Image Crawler</h4>
+                    </div>
                     <div class="form-group">
                         <label for="my_url">URL</label>
                         <input type="text" class="form-control" id="my_url" name="my_url" value="https://steelytoe.com/dev.titudev.com//api/v1/resources/master_file_tagging">
@@ -23,7 +27,6 @@
                         <select class="form-control" id="my_event" name="my_event">
                             <option value="BOROBUDUR MARATHON 2023">BOROBUDUR MARATHON 2023</option>
                             <option value="FRIENDSHIP-RUN-SEMARANG-2023">BOROBUDUR FRIENDSHIP RUN 2023</option>
-                            <option value="FRIENDSHIP-RUN-SEMARANG-2022">BOROBUDUR FRIENDSHIP RUN 2022</option>
                             <option value="SEMARANG-10K-2022">Semarang 10K 2022</option>
                             <option value="SEMARANG-10K-2023">Semarang 10K 2023</option>
                         </select>
@@ -73,7 +76,7 @@
 
                 </form>
             </div>
-            <div class="col-sm-8 col-md-8 col-lg-8 mt-4">
+            <div class="col-lg-8 mt-4">
                 <div class="col-lg-12">
                     <div id="div2">
 
@@ -133,7 +136,7 @@
                     success: function (response) {
                         var imageList = '<div class="row">';
                         $.each(response.data, function (index, photo) {
-                            imageList += '<div class="col-lg-3 col-sm-3 col-md-3">';
+                            imageList += '<div class="col-lg-3">';
                             imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
                             imageList += '<small>'
                             imageList += '<p><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
