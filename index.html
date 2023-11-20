@@ -38,8 +38,13 @@
                         <input type="text" class="form-control" id="my_bib" name="my_bib">
                     </div>
                     <div class="form-group">
-                        <label for="my_location">Location, e.g., startline, KM 10, etc</label>
+                        <label for="my_location">Location, e.g., startline, 10K, etc</label><br>
+                        <small>Tips: cari dulu tanpa location, setelah itu perhatikan informasi lokasi yang ditampilkan</small>
                         <input type="text" class="form-control" id="my_location" name="my_location">
+                    </div>
+                    <div class="form-group">
+                        <label for="my_pagenumber">Udah, pakai page number saja!</label><br>
+                        <input type="text" class="form-control" id="my_pagenumber" name="my_pagenumber">
                     </div>
 
                     <div class="form-group">
@@ -58,13 +63,27 @@
                             Filter by BIB/Name
                         </label>
                     </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="filter_pagenumber">
+                        <label class="form-check-label" for="filter_pagenumber">
+                            Use page number, kelamaan kalau harus klik Next !
+                        </label>
+                    </div>
 
                     <button type="button" class="btn btn-primary w-100">Search!</button>
 
                     <!-- Existing HTML structure with the form and other elements -->
 
-                    <div class="row m-3">
-                        <h5 id="my_log"></h5>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="d-flex justify-content-between">
+                                <p class="text-left" id="my_log"></p>
+                                <p class="text-right" id="my_pageinfo"></p>
+                            </div>
+
+                        </div>
+
+
 
                     </div>
                     <!-- Buttons for navigation -->
@@ -119,15 +138,22 @@
 
                 var bibSearch = $('#my_bib').val();
                 var locationValue = $('#my_location').val();
+                var pagenumberValue = $('#my_pagenumber').val();
+
 
                 var locationFilter = $('#filter_location').prop('checked');
                 var bibFilter = $('#filter_bib').prop('checked');
+                var pagenumberFilter = $('#filter_pagenumber').prop('checked');
+
 
                 if (locationFilter) {
                     queryParams['filter[mftgPhotoLocation][like]'] = '%' + locationValue + '%';
                 }
                 if (bibFilter) {
                     queryParams['filter[mftgDescription][like]'] = '%' + bibSearch + '%';
+                }
+                if (pagenumberFilter) {
+                    queryParams.pageNumber = pagenumberValue;
                 }
                 $('#div2').html('');
 
@@ -221,7 +247,9 @@
                 // Make AJAX call with updated page number (queryParams.pageNumber)
                 var url = $('#my_url').val();
                 var queryParams = params;
-                console.log(queryParams);
+                $('#div2').html('');
+                $('#my_pageinfo').html('Sekarang ada di halaman: ' + params.pageNumber);
+
                 $.ajax({
                     url: url,
                     method: 'GET',
@@ -229,11 +257,15 @@
                     success: function (response) {
                         var imageList = '<div class="row">';
                         $.each(response.data, function (index, photo) {
-                            imageList += '<div class="col-lg-3 col-sm-3 col-md-3">';
+                            imageList += '<div class="col-lg-3">';
                             imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
                             imageList += '<small>'
-                            imageList += '<p><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
-                            imageList += '</small></div>';
+                            imageList += '<div class="d-flex justify-content-between align-items-start">';
+                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
+                            imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
+                            imageList += '</div>';
+                            imageList += '</small>';
+                            imageList += '</div>';
                         });
                         imageList += '</div>';
                         $('#div2').html(imageList);
