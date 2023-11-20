@@ -7,6 +7,8 @@
 
     <title>Stellytoe Crawler</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="..." crossorigin="anonymous">
+
 </head>
 
 <body>
@@ -139,8 +141,14 @@
                             imageList += '<div class="col-lg-3">';
                             imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
                             imageList += '<small>'
-                            imageList += '<p><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
-                            imageList += '</small></div>';
+                            imageList += '<div class="d-flex justify-content-between align-items-start">';
+                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
+                            imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
+                            imageList += '</div>';
+                            imageList += '</small>';
+                            imageList += '</div>';
+
+
                         });
                         imageList += '</div>';
                         $('#div2').html(imageList);
