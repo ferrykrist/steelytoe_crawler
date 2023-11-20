@@ -55,6 +55,22 @@
                     </div>
 
                     <button type="button" class="btn btn-primary w-100">Search!</button>
+
+                    <!-- Existing HTML structure with the form and other elements -->
+
+                    <div class="row m-3">
+                        <h5 id="my_log"></h5>
+
+                    </div>
+                    <!-- Buttons for navigation -->
+                    <div class="row ml-1 mt-2 d-none" id="my_buttons">
+                        <button type="button" class="btn btn-secondary mx-1" id="my_firstButton">First</button>
+                        <button type="button" class="btn btn-secondary mx-1" id="my_previousButton">Previous</button>
+                        <button type="button" class="btn btn-secondary mx-1" id="my_nextButton">Next</button>
+                        <button type="button" class="btn btn-secondary mx-1" id="my_lastButton">Last</button>
+
+                    </div>
+
                 </form>
             </div>
             <div class="col-sm-8 col-md-8 col-lg-8 mt-4">
@@ -84,22 +100,24 @@
     <!-- Your jQuery functionality can go here -->
     <script>
         $(document).ready(function () {
+
             $('button').click(function () {
                 var url = $('#my_url').val();
                 var pageSize = $('#my_pagesize').val();
                 var eventName = $('#my_event').val();
-                var bibSearch = $('#my_bib').val();
-                var locationValue = $('#my_location').val();
-
-                var locationFilter = $('#filter_location').prop('checked');
-                var bibFilter = $('#filter_bib').prop('checked');
-
                 var queryParams = {
                     pageSize: pageSize,
                     pageNumber: 1,
                     sort: '+mftgPhotoDate',
                     'filter[mftgEventName]': eventName
                 };
+
+                var bibSearch = $('#my_bib').val();
+                var locationValue = $('#my_location').val();
+
+                var locationFilter = $('#filter_location').prop('checked');
+                var bibFilter = $('#filter_bib').prop('checked');
+
                 if (locationFilter) {
                     queryParams['filter[mftgPhotoLocation][like]'] = '%' + locationValue + '%';
                 }
@@ -128,14 +146,98 @@
                             var imageUrl = $(this).data('image');
                             $('#modalImage').attr('src', imageUrl);
                         });
+                        $('#my_log').html('Total ada ' + response.status.totalRecords + 'Foto');
+                        $('#my_buttons').removeClass('d-none');
+                        updateNavigation(response.status.totalRecords, queryParams);
                     },
 
                     error: function (xhr, status, error) {
                         // Handle errors here
                         console.error(status + ": " + error);
+                        $('#my_log').html(status + ": " + error);
                     }
                 });
+
+
             });
+
+            // Function to update navigation buttons
+            function updateNavigation(totalRecords, params) {
+                var queryParams = params;
+                var pageSize = $('#my_pagesize').val();
+                var totalPages = Math.ceil(totalRecords / pageSize);
+                var $firstButton = $('#my_firstButton');
+                var $previousButton = $('#my_previousButton');
+                var $nextButton = $('#my_nextButton');
+                var $lastButton = $('#my_lastButton');
+
+                $nextButton.off('click');
+                $previousButton.off('click');
+                $lastButton.off('click');
+                $firstButton.off('click');
+
+                $firstButton.click(function () {
+                    queryParams.pageNumber = 1;
+                    triggerAjax(queryParams);
+                });
+
+                $previousButton.click(function () {
+                    var newPagenumber = queryParams.pageNumber - 1;
+                    if (newPagenumber >= 1) {
+                        queryParams.pageNumber--;
+                        triggerAjax(queryParams);
+                    }
+                });
+
+                $nextButton.click(function () {
+                    var newPagenumber = queryParams.pageNumber + 1;
+                    if (newPagenumber < totalPages) {
+                        queryParams.pageNumber++;
+                        triggerAjax(queryParams);
+                    }
+                });
+
+                $lastButton.click(function () {
+                    queryParams.pageNumber = totalPages;
+                    triggerAjax(queryParams);
+                });
+
+
+            };
+            function triggerAjax(params) {
+                // Make AJAX call with updated page number (queryParams.pageNumber)
+                var url = $('#my_url').val();
+                var queryParams = params;
+                console.log(queryParams);
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    data: queryParams,
+                    success: function (response) {
+                        var imageList = '<div class="row">';
+                        $.each(response.data, function (index, photo) {
+                            imageList += '<div class="col-lg-3 col-sm-3 col-md-3">';
+                            imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
+                            imageList += '<small>'
+                            imageList += '<p><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
+                            imageList += '</small></div>';
+                        });
+                        imageList += '</div>';
+                        $('#div2').html(imageList);
+                        // Open modal on image click
+                        $('.image-popup').click(function () {
+                            var imageUrl = $(this).data('image');
+                            $('#modalImage').attr('src', imageUrl);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle errors
+                        console.error(status + ": " + error);
+                        $('#my_log').html(status + ": " + error);
+                    }
+                });
+            }
+
         });
 
 
