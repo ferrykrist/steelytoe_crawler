@@ -49,6 +49,10 @@
                         <label for="my_photoid">Coba cari menggunakan ID, mungkin fotomu terselip!</label><br>
                         <input type="text" class="form-control" id="my_photoid" name="my_photoid">
                     </div>
+                    <div class="form-group">
+                        <label for="my_photographer">Cari pakai nama fotografer (tulis tanpa @)</label><br>
+                        <input type="text" class="form-control" id="my_photographer" name="my_photographer">
+                    </div>
 
                     <div class="form-group">
                         <label for="my_pagesize">Jumlah foto yang mau ditampilkan</label>
@@ -76,6 +80,12 @@
                         <input class="form-check-input" type="checkbox" value="" id="filter_photoid">
                         <label class="form-check-label" for="filter_photoid">
                             Filter by Photo ID
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="filter_photographer">
+                        <label class="form-check-label" for="filter_photographer">
+                            Filter by Photographer
                         </label>
                     </div>
 
@@ -161,24 +171,31 @@
                     'filter[mftgEventName]': eventName
                 };
 
-                var bibSearch = $('#my_bib').val();
+                var bibValue = $('#my_bib').val();
                 var locationValue = $('#my_location').val();
                 var pagenumberValue = $('#my_pagenumber').val();
                 var photoidValue = $('#my_photoid').val();
+                var photographerValue = $('#my_photographer').val();
+
 
                 var locationFilter = $('#filter_location').prop('checked');
                 var bibFilter = $('#filter_bib').prop('checked');
                 var pagenumberFilter = $('#filter_pagenumber').prop('checked');
                 var photoidFilter = $('#filter_photoid').prop('checked');
+                var photographerFilter = $('#filter_photographer').prop('checked');
+
 
                 if (locationFilter) {
                     queryParams['filter[mftgPhotoLocation][like]'] = '%' + locationValue + '%';
                 }
                 if (bibFilter) {
-                    queryParams['filter[mftgDescription][like]'] = '%' + bibSearch + '%';
+                    queryParams['filter[mftgDescription][like]'] = '%' + bibValue + '%';
                 }
                 if (photoidFilter) {
                     queryParams['filter[mftgMfilId][like]'] = '%' + photoidValue + '%';
+                }
+                if (photographerFilter) {
+                    queryParams['filter[mftgFotografer][like]'] = '%' + photographerValue + '%';
                 }
                 if (pagenumberFilter) {
                     queryParams.pageNumber = pagenumberValue;
@@ -196,8 +213,10 @@
                             imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
                             imageList += '<small>'
                             imageList += '<div class="d-flex justify-content-between align-items-start">';
-                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
-                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small></p>';
+                            imageList += '<p class="mb-0 float-left" style="line-height:1.1"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
+                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small><br>';
+                            imageList += '<small><strong>Photographer:</strong>' + photo.mftgFotografer + '</small>';
+                            imageList += '</p>';
                             imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
                             imageList += '</div>';
                             imageList += '</small>';
@@ -293,7 +312,9 @@
                             imageList += '<small>'
                             imageList += '<div class="d-flex justify-content-between align-items-start">';
                             imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
-                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small></p>';
+                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small><br>';
+                            imageList += '<small><strong>Photographer:</strong>' + photo.mftgFotografer + '</small>';
+                            imageList += '</p>';
                             imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
                             imageList += '</div>';
                             imageList += '</small>';
