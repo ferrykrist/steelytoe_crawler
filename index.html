@@ -45,10 +45,20 @@
                         <label for="my_pagenumber">Udah, pakai page number saja!</label><br>
                         <input type="text" class="form-control" id="my_pagenumber" name="my_pagenumber">
                     </div>
+                    <div class="form-group">
+                        <label for="my_photoid">Coba cari menggunakan ID, mungkin fotomu terselip!</label><br>
+                        <input type="text" class="form-control" id="my_photoid" name="my_photoid">
+                    </div>
 
                     <div class="form-group">
                         <label for="my_pagesize">Jumlah foto yang mau ditampilkan</label>
                         <input type="text" class="form-control" id="my_pagesize" name="my_pagesize" value="30">
+                    </div>
+                    <div class="form-check">
+                        <input checked class="form-check-input" type="checkbox" value="" id="filter_bib">
+                        <label class="form-check-label" for="filter_bib">
+                            Filter by BIB/Name
+                        </label>
                     </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="filter_location">
@@ -57,15 +67,15 @@
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="filter_bib">
-                        <label class="form-check-label" for="filter_bib">
-                            Filter by BIB/Name
+                        <input class="form-check-input" type="checkbox" value="" id="filter_pagenumber">
+                        <label class="form-check-label" for="filter_pagenumber">
+                            Filter pakai page number, kelamaan kalau harus klik Next !
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="filter_pagenumber">
-                        <label class="form-check-label" for="filter_pagenumber">
-                            Use page number, kelamaan kalau harus klik Next !
+                        <input class="form-check-input" type="checkbox" value="" id="filter_photoid">
+                        <label class="form-check-label" for="filter_photoid">
+                            Filter by Photo ID
                         </label>
                     </div>
 
@@ -100,6 +110,7 @@
                         <ul class="small">
                             <li>Crawler ini bisa menampilkan foto anda sekaligus supaya tidak capek scroll halaman web penyelenggara lomba (belum lagi kalau nanti error)</li>
                             <li>Btw, koneksi internet berpengaruh ya. Loading lambat itu murni dari internet anda. Tipsnya jangan tampilkan foto banyak2.</li>
+                            <li>Kadang dari Steelytoe memblokir akses, sehingga tombol Next tidak bekerja, solusinya isikan saja page number </li>
                             <li>Cari dulu BIB/nama anda, jangan lupa centang Filter by BIB/Name </li>
                             <li>Foto tidak keluar walau BIB/Nama sudah di-input? Mungkin dari SteelyToe belum selesai proses Image to text </li>
                             <li>Mau cari berdasarkan lokasi? Cari BIB anda, lalu perhatikan Location yang ditampilkan. Misal: 10K, HM, FM, KM 6,5, dst </li>
@@ -153,12 +164,12 @@
                 var bibSearch = $('#my_bib').val();
                 var locationValue = $('#my_location').val();
                 var pagenumberValue = $('#my_pagenumber').val();
-
+                var photoidValue = $('#my_photoid').val();
 
                 var locationFilter = $('#filter_location').prop('checked');
                 var bibFilter = $('#filter_bib').prop('checked');
                 var pagenumberFilter = $('#filter_pagenumber').prop('checked');
-
+                var photoidFilter = $('#filter_photoid').prop('checked');
 
                 if (locationFilter) {
                     queryParams['filter[mftgPhotoLocation][like]'] = '%' + locationValue + '%';
@@ -166,10 +177,13 @@
                 if (bibFilter) {
                     queryParams['filter[mftgDescription][like]'] = '%' + bibSearch + '%';
                 }
+                if (photoidFilter) {
+                    queryParams['filter[mftgMfilId][like]'] = '%' + photoidValue + '%';
+                }
                 if (pagenumberFilter) {
                     queryParams.pageNumber = pagenumberValue;
                 }
-                $('#div2').html('');
+                $('#div2').html('<h4>Tunggu sebentar sedang loading...</h4>');
 
                 $.ajax({
                     url: url,
@@ -182,7 +196,8 @@
                             imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
                             imageList += '<small>'
                             imageList += '<div class="d-flex justify-content-between align-items-start">';
-                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
+                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
+                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small></p>';
                             imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
                             imageList += '</div>';
                             imageList += '</small>';
@@ -201,6 +216,8 @@
                             $('#my_buttons').removeClass('d-none');
                         }
                         updateNavigation(response.status.totalRecords, queryParams);
+                        $('#my_pageinfo').html('Sekarang ada di halaman: ' + queryParams.pageNumber);
+
                     },
 
                     error: function (xhr, status, error) {
@@ -261,7 +278,7 @@
                 // Make AJAX call with updated page number (queryParams.pageNumber)
                 var url = $('#my_url').val();
                 var queryParams = params;
-                $('#div2').html('');
+                $('#div2').html('<h4>Tunggu sebentar sedang loading...</h4>');
                 $('#my_pageinfo').html('Sekarang ada di halaman: ' + params.pageNumber);
 
                 $.ajax({
@@ -275,7 +292,8 @@
                             imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
                             imageList += '<small>'
                             imageList += '<div class="d-flex justify-content-between align-items-start">';
-                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '</p>';
+                            imageList += '<p class="mb-0 float-left"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
+                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small></p>';
                             imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
                             imageList += '</div>';
                             imageList += '</small>';
