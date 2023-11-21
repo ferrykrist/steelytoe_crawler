@@ -243,7 +243,8 @@
                     error: function (xhr, status, error) {
                         // Handle errors here
                         console.error(status + ": " + error);
-                        $('#my_log').html(status + ": " + error);
+                        $('#div2').html('<h4>Error.</h4>');
+
                     }
                 });
 
@@ -332,7 +333,7 @@
                     error: function (xhr, status, error) {
                         // Handle errors
                         console.error(status + ": " + error);
-                        $('#my_log').html(status + ": " + error);
+                        $('#div2').html('<h4>Error.</h4>');
                     }
                 });
             }
