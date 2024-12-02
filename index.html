@@ -15,10 +15,11 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-4 ">
+            <div class="col-lg-4 " style="background-color: #f1fcff;">
                 <form>
                     <div class="form-group mt-2">
                         <h4 class="text-center">Stellytoe Image Crawler</h4>
+                        <h6 class="text-center">02122024</h6>
                     </div>
                     <div class="form-group">
                         <label for="my_url">URL</label>
@@ -137,11 +138,11 @@
             </div>
             <div class="col-lg-8 mt-4">
                 <!-- Buttons for navigation -->
-                <div class="row ml-1 mt-2 d-none" id="my_buttons2">
-                    <button type="button" class="btn btn-secondary mx-1 firstButton">First</button>
-                    <button type="button" class="btn btn-secondary mx-1 previousButton">Previous</button>
-                    <button type="button" class="btn btn-secondary mx-1 nextButton">Next</button>
-                    <button type="button" class="btn btn-secondary mx-1 lastButton">Last</button>
+                <div class="row ml-1 d-none" id="my_buttons2">
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 firstButton">First</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 previousButton">Previous</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 nextButton">Next</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 lastButton">Last</button>
                 </div>
                 <div class="row">
                     <div class="col-lg-12" id="div2">
@@ -149,12 +150,12 @@
                     </div>
                 </div>
                 <!-- Buttons for navigation -->
-                <div class="row ml-1 mt-2 d-none" id="my_buttons3">
-                    <button type="button" class="btn btn-secondary mx-1 firstButton">First</button>
-                    <button type="button" class="btn btn-secondary mx-1 previousButton">Previous</button>
-                    <button type="button" class="btn btn-secondary mx-1 nextButton">Next</button>
-                    <button type="button" class="btn btn-secondary mx-1 lastButton">Last</button>
-                    <button type="button" class="btn btn-secondary mx-1 scrollToTopButton">Back to Top</button>
+                <div class="row ml-1 d-none" id="my_buttons3">
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 firstButton">First</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 previousButton">Previous</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 nextButton">Next</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 lastButton">Last</button>
+                    <button type="button" class="btn btn-sm btn-secondary mx-1 scrollToTopButton">Back to Top</button>
 
                 </div>
 
@@ -188,8 +189,8 @@
             $.each(result.data, function (index, photo) {
                 imageList += `
                     <div class="col-lg-3 my-1">
-                        <img src="${photo.mftgUrl}" class="img-fluid mb-2 image-popup" alt="Event Image"
-                            data-toggle="modal" data-target="#imageModal" data-image="${photo.mftgUrl}">
+                        <img src="${photo.mftgUrl}?x-oss-process=image/resize,w_480/format,jpg" class="img-fluid mb-2 image-popup" alt="Event Image"
+                            data-toggle="modal" data-target="#imageModal" data-image="${photo.mftgUrl}?x-oss-process=image/resize,w_480/format,jpg">
                         <small>
                             <div class="d-flex justify-content-between align-items-start">
                                 <p class="mb-0 float-left text-sm" style="line-height:1.1">
