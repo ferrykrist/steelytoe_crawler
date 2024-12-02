@@ -33,7 +33,7 @@
                             <option value="FRIENDSHIP-RUN-SEMARANG-2023">BOROBUDUR FRIENDSHIP RUN 2023</option>
                             <option value="SEMARANG 10K 2024">Semarang 10K 2024</option>
                             <option value="SEMARANG 10K 2023">Semarang 10K 2023</option>
-                            <option value="SEMARANG-10K-2022">Semarang 10K 2022</option>                            
+                            <option value="SEMARANG-10K-2022">Semarang 10K 2022</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -92,7 +92,7 @@
                         </label>
                     </div>
 
-                    <button type="button" class="btn btn-primary w-100">Search!</button>
+                    <button type="button" id="searchButton" class="btn btn-primary w-100">Search!</button>
 
                     <!-- Existing HTML structure with the form and other elements -->
 
@@ -112,15 +112,15 @@
                     </div>
                     <!-- Buttons for navigation -->
                     <div class="row ml-1 mt-2 d-none" id="my_buttons">
-                        <button type="button" class="btn btn-secondary mx-1" id="my_firstButton">First</button>
-                        <button type="button" class="btn btn-secondary mx-1" id="my_previousButton">Previous</button>
-                        <button type="button" class="btn btn-secondary mx-1" id="my_nextButton">Next</button>
-                        <button type="button" class="btn btn-secondary mx-1" id="my_lastButton">Last</button>
-
+                        <button type="button" class="btn btn-secondary mx-1 firstButton">First</button>
+                        <button type="button" class="btn btn-secondary mx-1 previousButton">Previous</button>
+                        <button type="button" class="btn btn-secondary mx-1 nextButton">Next</button>
+                        <button type="button" class="btn btn-secondary mx-1 lastButton">Last</button>
                     </div>
                     <div class="row m-2">
                         <h5>Baca ini dulu kak!</h5>
                         <ul class="small">
+                            <li><strong>Foto memang tidak bisa langsung di-download karena bukan punya web ini!</strong></li>
                             <li>Crawler ini bisa menampilkan foto anda sekaligus supaya tidak capek scroll halaman web penyelenggara lomba (belum lagi kalau nanti error)</li>
                             <li>Btw, koneksi internet berpengaruh ya. Loading lambat itu murni dari internet anda. Tipsnya jangan tampilkan foto banyak2.</li>
                             <li>Kadang dari Steelytoe memblokir akses, sehingga tombol Next tidak bekerja, solusinya isikan saja page number </li>
@@ -136,10 +136,26 @@
                 </form>
             </div>
             <div class="col-lg-8 mt-4">
+                <!-- Buttons for navigation -->
+                <div class="row ml-1 mt-2 d-none" id="my_buttons2">
+                    <button type="button" class="btn btn-secondary mx-1 firstButton">First</button>
+                    <button type="button" class="btn btn-secondary mx-1 previousButton">Previous</button>
+                    <button type="button" class="btn btn-secondary mx-1 nextButton">Next</button>
+                    <button type="button" class="btn btn-secondary mx-1 lastButton">Last</button>
+                </div>
                 <div class="row">
                     <div class="col-lg-12" id="div2">
 
                     </div>
+                </div>
+                <!-- Buttons for navigation -->
+                <div class="row ml-1 mt-2 d-none" id="my_buttons3">
+                    <button type="button" class="btn btn-secondary mx-1 firstButton">First</button>
+                    <button type="button" class="btn btn-secondary mx-1 previousButton">Previous</button>
+                    <button type="button" class="btn btn-secondary mx-1 nextButton">Next</button>
+                    <button type="button" class="btn btn-secondary mx-1 lastButton">Last</button>
+                    <button type="button" class="btn btn-secondary mx-1 scrollToTopButton">Back to Top</button>
+
                 </div>
 
             </div>
@@ -162,192 +178,116 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Your jQuery functionality can go here -->
     <script>
-        $(document).ready(function () {
 
-            $('button').click(function () {
-                var url = $('#my_url').val();
-                var pageSize = $('#my_pagesize').val();
-                var eventName = $('#my_event').val();
-                var queryParams = {
-                    pageSize: pageSize,
-                    pageNumber: 1,
-                    sort: '+mftgPhotoDate',
-                    'filter[mftgEventName]': eventName
-                };
+        function updateInputValue(selector, value) {
+            $(selector).val(value);
+        }
 
-                var bibValue = $('#my_bib').val();
-                var locationValue = $('#my_location').val();
-                var pagenumberValue = $('#my_pagenumber').val();
-                var photoidValue = $('#my_photoid').val();
-                var photographerValue = $('#my_photographer').val();
+        function generateRowImages(result) {
+            let imageList = '<div class="row">';
+            $.each(result.data, function (index, photo) {
+                imageList += `
+                    <div class="col-lg-3 my-1">
+                        <img src="${photo.mftgUrl}" class="img-fluid mb-2 image-popup" alt="Event Image"
+                            data-toggle="modal" data-target="#imageModal" data-image="${photo.mftgUrl}">
+                        <small>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <p class="mb-0 float-left text-sm" style="line-height:1.1">
+                                    <strong>Location:</strong> <a style="cursor:pointer;" onclick="updateInputValue('#my_location', '${photo.mftgPhotoLocation}')">${photo.mftgPhotoLocation}</a><br>
+                                    <strong>ID:</strong> <a style="cursor:pointer;" onclick="updateInputValue('#my_photoid', '${photo.mftgMfilId}')">${photo.mftgMfilId}</a><br>
+                                    <strong>Photographer:</strong> <a style="cursor:pointer;" onclick="updateInputValue('#my_photographer', '${photo.mftgFotografer.replace('@', '')}')">${photo.mftgFotografer}</a>
+                                </p>
+                                <a href="${photo.mftgUrl}" target="_blank"  class="text-sm-right ml-2">Download</a>
+                            </div>
+                        </small>
+                    </div>`;
+            });
+            return imageList + '</div>';
+        }
 
+        function generateParams() {
+            const queryParams = {
+                pageSize: $('#my_pagesize').val(),
+                pageNumber: 1,
+                sort: '+mftgPhotoDate',
+                'filter[mftgEventName]': $('#my_event').val()
+            };
 
-                var locationFilter = $('#filter_location').prop('checked');
-                var bibFilter = $('#filter_bib').prop('checked');
-                var pagenumberFilter = $('#filter_pagenumber').prop('checked');
-                var photoidFilter = $('#filter_photoid').prop('checked');
-                var photographerFilter = $('#filter_photographer').prop('checked');
+            const filters = [
+                { key: 'mftgPhotoLocation', value: $('#my_location').val(), isChecked: $('#filter_location').prop('checked') },
+                { key: 'mftgDescription', value: $('#my_bib').val(), isChecked: $('#filter_bib').prop('checked') },
+                { key: 'mftgMfilId', value: $('#my_photoid').val(), isChecked: $('#filter_photoid').prop('checked') },
+                { key: 'mftgFotografer', value: $('#my_photographer').val(), isChecked: $('#filter_photographer').prop('checked') }
+            ];
 
-
-                if (locationFilter) {
-                    queryParams['filter[mftgPhotoLocation][like]'] = '%' + locationValue + '%';
+            filters.forEach(filter => {
+                if (filter.isChecked) {
+                    queryParams[`filter[${filter.key}][like]`] = `%${filter.value}%`;
                 }
-                if (bibFilter) {
-                    queryParams['filter[mftgDescription][like]'] = '%' + bibValue + '%';
-                }
-                if (photoidFilter) {
-                    queryParams['filter[mftgMfilId][like]'] = '%' + photoidValue + '%';
-                }
-                if (photographerFilter) {
-                    queryParams['filter[mftgFotografer][like]'] = '%' + photographerValue + '%';
-                }
-                if (pagenumberFilter) {
-                    queryParams.pageNumber = pagenumberValue;
-                }
-                $('#div2').html('<h4>Tunggu sebentar sedang loading...</h4>');
-
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    data: queryParams,
-                    success: function (response) {
-                        var imageList = '<div class="row">';
-                        $.each(response.data, function (index, photo) {
-                            imageList += '<div class="col-lg-3 my-1">';
-                            imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
-                            imageList += '<small>'
-                            imageList += '<div class="d-flex justify-content-between align-items-start">';
-                            imageList += '<p class="mb-0 float-left" style="line-height:1.1"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
-                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small><br>';
-                            imageList += '<small><strong>Photographer:</strong>' + photo.mftgFotografer + '</small>';
-                            imageList += '</p>';
-                            imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
-                            imageList += '</div>';
-                            imageList += '</small>';
-                            imageList += '</div>';
-
-
-                        });
-                        imageList += '</div>';
-                        $('#div2').html(imageList);
-                        // Open modal on image click
-                        $('.image-popup').click(function () {
-                            var imageUrl = $(this).data('image');
-                            $('#modalImage').attr('src', imageUrl);
-                        });
-                        if (pageSize < response.status.totalRecords) {
-                            $('#my_buttons').removeClass('d-none');
-                        }
-                        updateNavigation(response.status.totalRecords, queryParams);
-                        $('#my_pageinfo').html('Sekarang ada di halaman: ' + queryParams.pageNumber);
-
-                    },
-
-                    error: function (xhr, status, error) {
-                        // Handle errors here
-                        console.error(status + ": " + error);
-                        $('#div2').html('<h4>Error. Yang kamu cari gak ketemu!</h4>');
-
-                    }
-                });
-
-
             });
 
-            // Function to update navigation buttons
-            function updateNavigation(totalRecords, params) {
-                var queryParams = params;
-                var pageSize = $('#my_pagesize').val();
-                var totalPages = Math.ceil(totalRecords / pageSize);
-                var $firstButton = $('#my_firstButton');
-                var $previousButton = $('#my_previousButton');
-                var $nextButton = $('#my_nextButton');
-                var $lastButton = $('#my_lastButton');
-                $('#my_log').html('Total ada ' + totalRecords + ' Foto dan ' + totalPages + ' halaman');
-
-                $nextButton.off('click');
-                $previousButton.off('click');
-                $lastButton.off('click');
-                $firstButton.off('click');
-
-                $firstButton.click(function () {
-                    queryParams.pageNumber = 1;
-                    triggerAjax(queryParams);
-                });
-
-                $previousButton.click(function () {
-                    var newPagenumber = queryParams.pageNumber - 1;
-                    if (newPagenumber >= 1) {
-                        queryParams.pageNumber--;
-                        triggerAjax(queryParams);
-                    }
-                });
-
-                $nextButton.click(function () {
-                    var newPagenumber = queryParams.pageNumber + 1;
-                    if (newPagenumber < totalPages) {
-                        queryParams.pageNumber++;
-                        triggerAjax(queryParams);
-                    }
-                });
-
-                $lastButton.click(function () {
-                    queryParams.pageNumber = totalPages;
-                    triggerAjax(queryParams);
-                });
-
-
-            };
-            function triggerAjax(params) {
-                // Make AJAX call with updated page number (queryParams.pageNumber)
-                var url = $('#my_url').val();
-                var queryParams = params;
-                $('#div2').html('<h4>Tunggu sebentar sedang loading...</h4>');
-                $('#my_pageinfo').html('Sekarang ada di halaman: ' + params.pageNumber);
-
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    data: queryParams,
-                    success: function (response) {
-                        var imageList = '<div class="row">';
-                        $.each(response.data, function (index, photo) {
-                            imageList += '<div class="col-lg-3 my-1">';
-                            imageList += '<img src="' + photo.mftgUrl + '" class="img-fluid mb-2 image-popup" alt="Event Image" data-toggle="modal" data-target="#imageModal" data-image="' + photo.mftgUrl + '">';
-                            imageList += '<small>'
-                            imageList += '<div class="d-flex justify-content-between align-items-start">';
-                            imageList += '<p class="mb-0 float-left" style="line-height:1.1"><strong>Location:</strong> ' + photo.mftgPhotoLocation + '<br>';
-                            imageList += '<small><strong>ID:</strong>' + photo.mftgMfilId + '</small><br>';
-                            imageList += '<small><strong>Photographer:</strong>' + photo.mftgFotografer + '</small>';
-                            imageList += '</p>';
-                            imageList += '<a href="' + photo.mftgUrl + '" target=_blank class="text-sm-right ml-2">download</a>';
-                            imageList += '</div>';
-                            imageList += '</small>';
-                            imageList += '</div>';
-                        });
-                        imageList += '</div>';
-                        $('#div2').html(imageList);
-                        // Open modal on image click
-                        $('.image-popup').click(function () {
-                            var imageUrl = $(this).data('image');
-                            $('#modalImage').attr('src', imageUrl);
-                        });
-                    },
-                    error: function (xhr, status, error) {
-                        // Handle errors
-                        console.error(status + ": " + error);
-                        $('#div2').html('<h4>Error. Yang kamu cari gak ketemu!</h4>');
-
-                    }
-                });
+            if ($('#filter_pagenumber').prop('checked')) {
+                queryParams.pageNumber = $('#my_pagenumber').val();
             }
+            return queryParams;
+        }
 
+        function triggerAjax(params) {
+            $('#div2').html('<h4>Tunggu sebentar sedang loading...</h4>');
+            $('#my_pageinfo').html(`Sekarang ada di halaman: ${params.pageNumber}`);
 
+            $.ajax({
+                url: $('#my_url').val(),
+                method: 'GET',
+                data: params,
+                success: function (response) {
+                    $('#div2').html(generateRowImages(response));
+                    $('.image-popup').click(function () {
+                        $('#modalImage').attr('src', $(this).data('image'));
+                    });
+                    if (params.pageSize < response.status.totalRecords) {
+                        $('#my_buttons').removeClass('d-none');
+                        $('#my_buttons2').removeClass('d-none');
+                        $('#my_buttons3').removeClass('d-none');
 
+                    }
+                    updateNavigation(response.status.totalRecords, params);
+                },
+                error: function (xhr, status, error) {
+                    console.error(`${status}: ${error}`);
+                    $('#div2').html('<h4>Error. Yang kamu cari gak ketemu!</h4>');
+                }
+            });
+        }
+
+        function updateNavigation(totalRecords, params) {
+            const pageSize = params.pageSize;
+            const totalPages = Math.ceil(totalRecords / pageSize);
+            $('#my_log').html(`Total ada ${totalRecords} Foto dan ${totalPages} halaman`);
+
+            ['.firstButton', '.previousButton', '.nextButton', '.lastButton'].forEach(selector => {
+                $(selector).off('click');
+            });
+
+            $('.firstButton').click(() => { params.pageNumber = 1; triggerAjax(params); });
+            $('.previousButton').click(() => { if (params.pageNumber > 1) params.pageNumber--; triggerAjax(params); });
+            $('.nextButton').click(() => { if (params.pageNumber < totalPages) params.pageNumber++; triggerAjax(params); });
+            $('.lastButton').click(() => { params.pageNumber = totalPages; triggerAjax(params); });
+        }
+
+        $(document).ready(function () {
+            $('#searchButton').click(function () {
+                const queryParams = generateParams();
+                console.log(queryParams);
+                triggerAjax(queryParams);
+            });
+
+            $('.scrollToTopButton').click(function () {
+                $('html, body').animate({ scrollTop: 0 }, 'smooth');
+            });
         });
-
-
     </script>
+
 
 
 </body>
